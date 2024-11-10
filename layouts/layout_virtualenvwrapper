@@ -1,0 +1,5 @@
+layout_virtualenvwrapper() {
+  local venv_path="${WORKON_HOME}/$1"
+  layout_virtualenv $venv_path
+}
+

@@ -1,0 +1,25 @@
+layout_uv() {
+
+  if [[ ! -f pyproject.toml ]]; then
+    log_error 'No pyproject.toml found.  Use `uv init` to create one first.'
+    exit 2
+  fi
+
+  local venv_root="$HOME/.config/venvs"
+  local path_hash=$(echo -n "$PWD" | sha256sum | cut -c1-8)
+  local project_name=$(basename $PWD)
+  local venv_path="${venv_root}/$project_name-$path_hash"
+
+  if [[ ! -d "$venv_path" ]]; then
+    echo "Creating virtual environment in $venv_path"
+    mkdir -p "$venv_path"
+    uv venv --prompt "$project_name" "$venv_path"
+  fi
+
+  PATH_add "$venv_path/bin"
+  [[ -d "$venv_path/scripts" ]] && PATH_add "$venv_path/scripts"
+  source $venv_path/bin/activate
+  # make intent clear to uv
+  export UV_PROJECT_ENVIRONMENT=$VIRTUAL_ENV
+}
+
